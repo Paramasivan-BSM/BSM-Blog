@@ -2,6 +2,7 @@ let path = require("path");
 let jwt = require("jsonwebtoken");
 let bcrypt = require("bcrypt");
 const signupdata = require(path.join(__dirname, "..", "model", "signup.model.js"));
+let tokenprovider = require(path.join(__dirname,"..","utilities","tokengenerator.js"));
 
 module.exports = {
 
@@ -61,12 +62,26 @@ module.exports = {
       });
     }
 
-   let token =  jwt.sign({email:exist.email},process.env.SECRETKEY,{expiresIn:"1h"})
+
+
+let logstatus = await bcrypt.compare(password,exist.password);
+
+
+if(!logstatus){
+
+  return res.json({
+    msg:"invalid password",
+    status:false
+  })
+
+}
+
+  let authtoken = tokenprovider(exist)
 
     res.json({
       msg:"Login Successful!",
       data:exist,
-      id:token
+      id:authtoken
     })
   }
 

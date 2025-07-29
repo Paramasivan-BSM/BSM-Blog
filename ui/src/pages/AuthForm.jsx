@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { AuthStore } from '../statemanagement/auth.store';
+import axios from "axios"
 import {
   Grid,
   Paper,
@@ -11,10 +13,65 @@ import {
 } from '@mui/material';
 
 export const AuthForm = () => {
+
+
+  let {signUp,signup_msg} = AuthStore();
+
+  console.log(signup_msg);
+  
+
+
   const [tab, setTab] = useState(0);
+
+  // Sign Up form state as a single object
+  const [signup, setSignup] = useState({
+    name: '',
+    email: '',
+    password: '',
+  });
+
+  // Sign In form state (optional if you plan to collect it too)
+  const [signin, setSignin] = useState({
+    email: '',
+    password: '',
+  });
 
   const handleChange = (event, newValue) => {
     setTab(newValue);
+  };
+
+  // Handle changes for signup form
+  const handleSignupChange = (e) => {
+    const { name, value } = e.target;
+    setSignup((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle changes for signin form
+  const handleSigninChange = (e) => {
+    const { name, value } = e.target;
+    setSignin((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Submit handlers
+  const handleSignupSubmit = (e) => {
+    e.preventDefault();
+    console.log('Signup data:', signup);
+
+    signUp(signup)
+
+   
+    
+  };
+
+  const handleSigninSubmit = (e) => {
+    e.preventDefault();
+    console.log('Signin data:', signin);
   };
 
   const textFieldStyles = {
@@ -57,12 +114,15 @@ export const AuthForm = () => {
                 <Typography variant="h5" align="center" gutterBottom>
                   Sign In
                 </Typography>
-                <form noValidate>
+                <form noValidate onSubmit={handleSigninSubmit}>
                   <Grid container spacing={2} direction="column">
                     <Grid item>
                       <TextField
                         fullWidth
                         label="Email"
+                        name="email"
+                        value={signin.email}
+                        onChange={handleSigninChange}
                         variant="outlined"
                         type="email"
                         required
@@ -73,6 +133,9 @@ export const AuthForm = () => {
                       <TextField
                         fullWidth
                         label="Password"
+                        name="password"
+                        value={signin.password}
+                        onChange={handleSigninChange}
                         variant="outlined"
                         type="password"
                         required
@@ -80,7 +143,7 @@ export const AuthForm = () => {
                       />
                     </Grid>
                     <Grid item>
-                      <Button fullWidth variant="contained" sx={{ background: '#57564F' }}>
+                      <Button type="submit" fullWidth variant="contained" sx={{ background: '#57564F' }}>
                         Login
                       </Button>
                     </Grid>
@@ -92,12 +155,15 @@ export const AuthForm = () => {
                 <Typography variant="h5" align="center" gutterBottom>
                   Sign Up
                 </Typography>
-                <form noValidate>
+                <form noValidate onSubmit={handleSignupSubmit}>
                   <Grid container spacing={2} direction="column">
                     <Grid item>
                       <TextField
                         fullWidth
                         label="Name"
+                        name="name"
+                        value={signup.name}
+                        onChange={handleSignupChange}
                         variant="outlined"
                         required
                         sx={textFieldStyles}
@@ -107,6 +173,9 @@ export const AuthForm = () => {
                       <TextField
                         fullWidth
                         label="Email"
+                        name="email"
+                        value={signup.email}
+                        onChange={handleSignupChange}
                         variant="outlined"
                         type="email"
                         required
@@ -117,6 +186,9 @@ export const AuthForm = () => {
                       <TextField
                         fullWidth
                         label="Password"
+                        name="password"
+                        value={signup.password}
+                        onChange={handleSignupChange}
                         variant="outlined"
                         type="password"
                         required
@@ -124,7 +196,7 @@ export const AuthForm = () => {
                       />
                     </Grid>
                     <Grid item>
-                      <Button fullWidth variant="contained" sx={{ background: '#57564F' }}>
+                      <Button type="submit" fullWidth variant="contained" sx={{ background: '#57564F' }}>
                         Register
                       </Button>
                     </Grid>
